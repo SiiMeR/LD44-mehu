@@ -97,7 +97,7 @@ Rigidbody2D:
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 0
-  m_AngularDrag: 0
+  m_AngularDrag: 50
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_Interpolate: 0
@@ -118,6 +118,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   controller: {fileID: 0}
   animationSpeedVariation: 0.2
+  isMainBoid: 0
+  _terrainPushAwayLayer:
+    serializedVersion: 2
+    m_Bits: 1024
 --- !u!95 &3957742672756448835
 Animator:
   serializedVersion: 3

@@ -59,6 +59,16 @@ public class BoidController : MonoBehaviour
             boids.Add(Spawn());
     }
 
+    private void Update()
+    {
+        transform.localPosition = new Vector3(5,0,0);
+        
+        if (Input.GetKey(KeyCode.Z))
+        {
+            boids.Add(Spawn(transform.position));
+        }
+    }
+
     public GameObject Spawn()
     {
         return Spawn(transform.position + Random.insideUnitSphere * spawnRadius);
@@ -69,8 +79,9 @@ public class BoidController : MonoBehaviour
         var rotation = Quaternion.Slerp(transform.rotation, Random.rotation, 0.3f);
         var boid = Instantiate(boidPrefab, position, rotation);
         
-        var r = Random.Range(0.7f, 1.2f);
+        var r = Random.Range(0.7f, 1.3f);
         boid.GetComponent<BoidBehaviour>().controller = this;
+        
         boid.transform.localScale *= r;
         return boid;
     }
