@@ -61,7 +61,7 @@ public class BoidController : MonoBehaviour
 
     private void Update()
     {
-        transform.localPosition = new Vector3(5,0,0);
+        transform.localPosition = new Vector3(8,0,0);
         
         if (Input.GetKey(KeyCode.Z))
         {

@@ -23,6 +23,7 @@
 
 using UnityEngine;
 using System.Collections;
+using System.Linq;
 using Cinemachine;
 
 public class BoidBehaviour : MonoBehaviour
@@ -56,6 +57,9 @@ public class BoidBehaviour : MonoBehaviour
     private SpriteRenderer _renderer;
 
     private Rigidbody2D _rigidBody;
+
+    private BoxCollider2D _boxCollider2D;
+
     // Caluculates the separation vector with a target.
     Vector3 GetSeparationVector(Transform target)
     {
@@ -91,12 +95,12 @@ public class BoidBehaviour : MonoBehaviour
             if (Controller.boids.Count == 0) return;
             var controllerBoid = Controller.boids[0];    
             Controller.transform.parent = controllerBoid.transform;
-            Controller.transform.localPosition = new Vector3(5,0,0);
+            Controller.transform.localPosition = new Vector3(8,0,0);
             Controller.enabled = true;
             FindObjectOfType<CinemachineVirtualCamera>().Follow = controllerBoid.transform;
             var boidBehaviour = controllerBoid.GetComponent<BoidBehaviour>();
             boidBehaviour.isMainBoid = true;
-            boidBehaviour.gameObject.layer = 0;
+            boidBehaviour.gameObject.layer = 11;
             controllerBoid.GetComponent<BoxCollider2D>().isTrigger = true;
         }
     }
@@ -105,6 +109,7 @@ public class BoidBehaviour : MonoBehaviour
     {
         _rigidBody = GetComponent<Rigidbody2D>();
         _renderer = GetComponent<SpriteRenderer>();
+        _boxCollider2D = GetComponent<BoxCollider2D>();
 
         noiseOffset = Random.value * 10.0f;
 
@@ -122,6 +127,7 @@ public class BoidBehaviour : MonoBehaviour
     
     void FixedUpdate()
     {
+        
         var rot = transform.rotation.eulerAngles.z;
         _renderer.flipY = rot <= 270f && rot > 90f;
 
@@ -139,7 +145,32 @@ public class BoidBehaviour : MonoBehaviour
             
             var targetPos = new Vector2(transform.right.x, transform.right.y) * Time.deltaTime * Controller.velocity;
 
+            Debug.DrawRay(transform.position, transform.right * 6.0f, Color.cyan);
+            // TODO : boxcast here?
+            var bounds = _boxCollider2D.bounds;
+            var rch = Physics2D.BoxCast(transform.position, bounds.size, transform.rotation.z,transform.right,6f,_terrainPushAwayLayer);
+            if (rch)
+            {
+
+                var rotAngle = transform.rotation.eulerAngles.z;
+                if (Mathf.Abs(rotAngle % 90) < float.Epsilon) // perfect values
+                {
+                    // skip this branch                
+                }
+                else
+                {
+                    var quat = Quaternion.FromToRotation(transform.right, rch.normal) * transform.rotation;
+                    // var quat = Quaternion.FromToRotation(transform.right, rayCastHit.normal);
+                    transform.rotation = Quaternion.Lerp(transform.rotation, quat, 0.1f);
+ 
+                }
+
+                targetPos *= 0.2f + (rch.distance/6.0f);
+            
+            }
+
             _rigidBody.MovePosition(_rigidBody.position + targetPos );
+            
             
             return;
 
@@ -188,11 +219,12 @@ public class BoidBehaviour : MonoBehaviour
         var targetRigidBodyPos = new Vector2(transform.right.x, transform.right.y) * Time.deltaTime * velocity;
 
        
-        var rayCastHit = Physics2D.Raycast(transform.position, transform.right, 6.0f,_terrainPushAwayLayer);
-        
+        var bounds2 = _boxCollider2D.bounds;
+        var rch2 = Physics2D.BoxCast(transform.position, bounds2.size, transform.rotation.z,transform.right,6f,_terrainPushAwayLayer);
+
         Debug.DrawRay(transform.position, transform.right * 6.0f, Color.cyan);
        
-        if (rayCastHit)
+        if (rch2)
         {
 
             var rotAngle = transform.rotation.eulerAngles.z;
@@ -202,13 +234,13 @@ public class BoidBehaviour : MonoBehaviour
             }
             else
             {
-                var quat = Quaternion.FromToRotation(transform.right, rayCastHit.normal) * transform.rotation;
+                var quat = Quaternion.FromToRotation(transform.right, rch2.normal) * transform.rotation;
                 // var quat = Quaternion.FromToRotation(transform.right, rayCastHit.normal);
                 transform.rotation = Quaternion.Lerp(transform.rotation, quat, 0.2f);
  
             }
 
-            targetRigidBodyPos *= 0.1f + (rayCastHit.distance/6.0f);
+            targetRigidBodyPos *= 0.3f + (rch2.distance/6.0f);
             
         }
         else
@@ -225,7 +257,9 @@ public class BoidBehaviour : MonoBehaviour
 
 
         _rigidBody.MovePosition(_rigidBody.position + targetRigidBodyPos );
-        
+        var transformRotation = transform.rotation;
+        transformRotation.eulerAngles = new Vector3(0, 0, transformRotation.eulerAngles.z);
+        transform.rotation = transformRotation;
         // Moves forawrd.
 //        transform.position = currentPosition + transform.right * (velocity * Time.deltaTime);
     }
