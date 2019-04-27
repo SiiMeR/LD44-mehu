@@ -32,6 +32,8 @@ public class BoidBehaviour : MonoBehaviour
     // Options for animation playback.
     public float animationSpeedVariation = 0.2f;
 
+    public bool isMainBoid;
+    
     // Random seed.
     float noiseOffset;
 
@@ -59,6 +61,8 @@ public class BoidBehaviour : MonoBehaviour
 
     void FixedUpdate()
     {
+        if(isMainBoid)
+            return;
         //        _renderer.flipY = Mathf.Abs(transform.rotation.eulerAngles.z % 360) > 90f;
         var rot = transform.rotation.eulerAngles.z;
         _renderer.flipY = rot <= 270f && rot > 90f;

@@ -23,6 +23,7 @@
 
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class BoidController : MonoBehaviour
 {
@@ -46,9 +47,16 @@ public class BoidController : MonoBehaviour
 
     public LayerMask searchLayer;
 
+    public List<GameObject> boids;
+
+    public int BoidsCount => boids.Count;
+
     void Start()
     {
-        for (var i = 0; i < spawnCount; i++) Spawn();
+        boids = new List<GameObject>();
+        
+        for (var i = 0; i < spawnCount; i++) 
+            boids.Add(Spawn());
     }
 
     public GameObject Spawn()
