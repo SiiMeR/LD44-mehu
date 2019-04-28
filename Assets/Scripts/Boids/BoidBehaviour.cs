@@ -26,6 +26,8 @@ using System.Collections;
 using System.Linq;
 using Cinemachine;
 using DG.Tweening;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class BoidBehaviour : MonoBehaviour
 {
@@ -63,6 +65,8 @@ public class BoidBehaviour : MonoBehaviour
     private BoxCollider2D _boxCollider2D;
 
     private ParticleSystem _particleSystem;
+
+    public bool MarkedForKill;
     // Caluculates the separation vector with a target.
     Vector3 GetSeparationVector(Transform target)
     {
@@ -84,11 +88,15 @@ public class BoidBehaviour : MonoBehaviour
     }
 
     public void DisableVisualAndPlay()
-    {    
-        if (isMainBoid)
+    {
+        if (MarkedForKill)
         {
-            print("ismain");
-            if (Controller.boids.Count == 0) return;
+            return;
+        }
+        
+        MarkedForKill = true;
+        if (isMainBoid && Controller.BoidsCount != 0)
+        {
             var controllerBoid = Controller.boids[0];    
             Controller.transform.parent = controllerBoid.transform;
             Controller.transform.localPosition = new Vector3(8,0,0);
@@ -108,7 +116,19 @@ public class BoidBehaviour : MonoBehaviour
                 _particleSystem.Play();
             })
             .AppendInterval(1.0f)
-            .AppendCallback(() => Destroy(this))
+            .AppendCallback(() =>
+            {
+                if (FindObjectsOfType<BoidBehaviour>().Length == 1)
+                {
+                    Controller.DeathScreen.DOFade(1.0f, 1.0f)
+                        .OnComplete(() => SceneManager.LoadScene("End"));
+                    Destroy(gameObject);
+                }
+                else
+                {
+                    Destroy(gameObject);
+                }
+            })
             .Play();
     }    
 
@@ -286,4 +306,6 @@ public class BoidBehaviour : MonoBehaviour
         // Moves forawrd.
 //        transform.position = currentPosition + transform.right * (velocity * Time.deltaTime);
     }
+
+
 }
