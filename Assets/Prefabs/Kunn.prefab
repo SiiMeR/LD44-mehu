@@ -513,7 +513,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 7
+  m_SortingOrder: 10
   m_Sprite: {fileID: 21300002, guid: 058a4f0e1a68c984bb0ee74e4433f029, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -949,6 +949,8 @@ GameObject:
   m_Component:
   - component: {fileID: 7793237510723224878}
   - component: {fileID: 7793237510723624883}
+  - component: {fileID: 5815523386777811056}
+  - component: {fileID: 711072229462664307}
   m_Layer: 0
   m_Name: Kunn
   m_TagString: Untagged
@@ -1000,6 +1002,37 @@ MonoBehaviour:
   - {fileID: 7793237510166285751}
   - {fileID: 7793237509778493377}
   m_Weight: 1
+--- !u!114 &5815523386777811056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7793237510723721486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 503cb0e1f79f66f44b108d0189146460, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!95 &711072229462664307
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7793237510723721486}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 1b3d7a324adc0a340b3311867af36adc, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &7793237510723721488
 GameObject:
   m_ObjectHideFlags: 0
