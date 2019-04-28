@@ -1,5 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using DG.Tweening;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -17,7 +20,15 @@ public class StartController : MonoBehaviour
         if (Input.GetButtonDown("Cancel"))
             Application.Quit();
 
-        if (Input.GetButtonDown("Return")) 
-            SceneManager.LoadScene("Siim");
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            var seq = DOTween.Sequence();
+            
+            FindObjectsOfType<TextMeshProUGUI>().ToList().ForEach(Text => seq.Append(Text.DOFade(0f,0.75f)));
+
+            seq.AppendCallback(() => SceneManager.LoadScene("Siim"));
+
+            seq.Play();
+        }
     }
 }
