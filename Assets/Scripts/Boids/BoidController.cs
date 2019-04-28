@@ -25,6 +25,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
+using DG.Tweening;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -57,10 +58,14 @@ public class BoidController : MonoBehaviour
 
     void Start()
     {
-        boids = new List<GameObject>();
+        boids = new List<GameObject>();    
 
         for (var i = 0; i < spawnCount; i++)
             boids.Add(Spawn());
+        
+        DeathScreen.color = Color.black;
+        DeathScreen.DOFade(0f, 4f)
+            .SetEase(Ease.InQuint);
     }
 
     private void Update()
