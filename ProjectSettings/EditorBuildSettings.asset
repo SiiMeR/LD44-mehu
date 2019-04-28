@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/Siim.unity
+    guid: 6e5fa672ecfd14242b24bfbc2401d16c
   m_configObjects: {}

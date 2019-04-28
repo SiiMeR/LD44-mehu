@@ -13,9 +13,15 @@ public class Weapon : MonoBehaviour
     public float _coolDownTimer;
     public float _windupTimer;
     public bool _punching;
+
+    public Transform weaponTrans;
+
+    private Animator _animator;
+    
     // Start is called before the first frame update
     void Start()
     {
+        _animator = GetComponent<Animator>();
         _collider = GetComponent<BoxCollider2D>();
         _collider.enabled = false;
     }
@@ -32,22 +38,22 @@ public class Weapon : MonoBehaviour
         _windupTimer = _windupTime;
         _punching = true;
 
+//        _animationController.
         while ((_windupTimer -= Time.deltaTime) > 0)
         {
             var dir = crow.transform.position - transform.position;
             var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);
+            weaponTrans.rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);
 
             yield return null;
         }
         
         _collider.enabled = true;
 
-        var targetPos = crow.transform.position - transform.position;
+        var targetPos = crow.transform.position - weaponTrans.position;
 
-        print(targetPos);
-        var targ = Vector2.MoveTowards(transform.position, targetPos, GetComponent<SpriteRenderer>().bounds.size.y);
-        transform
+//        var targ = Vector2.MoveTowards(transform.position, targetPos, GetComponent<SpriteRenderer>().bounds.size.y);
+        weaponTrans    
             .DOPunchPosition(targetPos, 1.5f, 0, 0.1f)
             .OnComplete(() =>
             {

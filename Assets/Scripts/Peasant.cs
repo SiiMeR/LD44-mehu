@@ -15,7 +15,6 @@ public class Peasant : MonoBehaviour
     [SerializeField] private Weapon _weapon;
     [SerializeField] private int _crowsOnDeath = 3;
 
-    [SerializeField] private GameObject _Hptest;
     
     private int _currentHealth;
     private SpriteRenderer _renderer;
@@ -57,11 +56,7 @@ public class Peasant : MonoBehaviour
             {
                 Die();
                 return;
-            }
-
-            var ls = _Hptest.transform.localScale;
-            ls.y = 1 - (1.0f / ((0.1f) + _currentHealth));
-            _Hptest.transform.localScale = ls;
+}
 
 
         }
