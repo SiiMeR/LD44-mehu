@@ -35,6 +35,8 @@ public class Weapon : MonoBehaviour
     
     public IEnumerator StartWindupAnimation(GameObject crow)
     {
+        var rndSnd = Random.Range(1, 7);
+        AudioManager.Instance.Play($"angry-peasant{rndSnd}",position:transform.position);
         _windupTimer = _windupTime;
         _punching = true;
 
@@ -69,7 +71,9 @@ public class Weapon : MonoBehaviour
     {
         if (other.gameObject.layer == 8 || other.gameObject.layer == 11)
         {
-                
+
+            var randSpiking = Random.Range(1, 7);
+            AudioManager.Instance.Play($"stabbing{randSpiking}", 0.7f,position:transform.position);
             var go = other.gameObject;
             go.layer = 0;
             

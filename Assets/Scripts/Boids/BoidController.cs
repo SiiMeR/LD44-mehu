@@ -26,6 +26,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class BoidController : MonoBehaviour
 {
@@ -51,6 +52,7 @@ public class BoidController : MonoBehaviour
 
     public List<GameObject> boids;
 
+    public Image DeathScreen;
     public int BoidsCount => boids.Count;
 
     void Start()

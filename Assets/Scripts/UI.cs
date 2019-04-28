@@ -30,7 +30,7 @@ public class UI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        var boidsCount = Controller?.boids.Count ?? 0;
-        _textMeshProUgui.text = "<sprite=0> = " + (boidsCount + 1) ;
+        var len = FindObjectsOfType<BoidBehaviour>().Length;
+        _textMeshProUgui.text = "<sprite=0> = " + len ;
     }
 }
