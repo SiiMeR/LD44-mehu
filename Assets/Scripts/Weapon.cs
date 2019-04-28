@@ -28,7 +28,6 @@ public class Weapon : MonoBehaviour
     
     public IEnumerator StartWindupAnimation(GameObject crow)
     {
-        _collider.enabled = true;
         _windupTimer = _windupTime;
         _punching = true;
 
@@ -40,6 +39,8 @@ public class Weapon : MonoBehaviour
 
             yield return null;
         }
+        
+        _collider.enabled = true;
 
         var targetPos = crow.transform.position - transform.position;
 
@@ -49,6 +50,7 @@ public class Weapon : MonoBehaviour
             {
                 _collider.enabled = false;
                 _punching = false;
+                _coolDownTimer = _coolDown;
             });
     }
 
@@ -61,18 +63,41 @@ public class Weapon : MonoBehaviour
             var go = other.gameObject;
             go.layer = 0;
             
-            Destroy(other.gameObject);
-//            Destroy(go.gameObject.GetComponent<BoidBehaviour>());
-//        
-//            var joint = gameObject.AddComponent<FixedJoint2D>();
-//
-//            var closestPoint = GetComponent<Collider2D>().bounds.ClosestPoint(go.transform.position);
-//
-//            joint.anchor = closestPoint;
-//
-//            joint.connectedBody = other.gameObject.GetComponent<Rigidbody2D>();
-//
-//            joint.enableCollision = false;
+            Destroy(go.GetComponent<BoxCollider2D>());
+
+            var boidBehaviour = go.gameObject.GetComponent<BoidBehaviour>();
+
+            if (boidBehaviour.Controller)
+            {
+                boidBehaviour.Controller.boids?.Remove(go);
+            }
+
+            boidBehaviour.enabled = false;
+        
+            var joint = gameObject.AddComponent<FixedJoint2D>();
+
+            var closestPoint = GetComponent<Collider2D>().bounds.ClosestPoint(go.transform.position);
+
+            joint.anchor = closestPoint;
+
+            joint.connectedBody = other.gameObject.GetComponent<Rigidbody2D>();
+
+            joint.enableCollision = false;
+
+            go.transform.parent = joint.transform;
+            
+            Destroy(go.GetComponent<Animator>());
+
+            var seq = DOTween.Sequence();
+            seq.AppendInterval(2.0f)
+                .AppendCallback(() => go.GetComponentInChildren<ParticleSystem>().Play())
+                .AppendCallback(() => go.GetComponent<SpriteRenderer>().enabled = false)
+                .AppendInterval(1.0f)
+                .AppendCallback(() => Destroy(go))    
+                .Play();
+//            go.GetComponent<SpriteRenderer>()
+//                .DOFade(0f, 2.5f)
+//                .SetEase(Ease.Linear);
 
         }
     }

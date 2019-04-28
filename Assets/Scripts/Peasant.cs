@@ -1,7 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class Peasant : MonoBehaviour
 {
@@ -11,7 +13,10 @@ public class Peasant : MonoBehaviour
     [SerializeField] private float _detectionRadius = 10.0f;
     [SerializeField] private LayerMask _crows;
     [SerializeField] private Weapon _weapon;
+    [SerializeField] private int _crowsOnDeath = 3;
 
+    [SerializeField] private GameObject _Hptest;
+    
     private int _currentHealth;
     private SpriteRenderer _renderer;
 
@@ -20,9 +25,16 @@ public class Peasant : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        _currentHealth = _maxHealth;
         _renderer = GetComponent<SpriteRenderer>();
 
         //MoveAround();
+    }
+
+    public void SpawnShit()
+    {
+        FindObjectOfType<BoidController>()?
+            .Spawn(_crowsOnDeath, transform.position);
     }
 
     void MoveAround()
@@ -33,6 +45,33 @@ public class Peasant : MonoBehaviour
         transform.DOMoveX(transform.position.x + (moveValue * Random.Range(1, 2)), 5f)
             .SetEase(Ease.Linear)
             .OnComplete(MoveAround);
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.layer == 8 || other.gameObject.layer == 11)
+        {
+
+            print("hp " + _currentHealth);
+            if (_currentHealth-- <= 0)
+            {
+                Die();
+                return;
+            }
+
+            var ls = _Hptest.transform.localScale;
+            ls.y = 1 - (1.0f / ((0.1f) + _currentHealth));
+            _Hptest.transform.localScale = ls;
+
+
+        }
+    }
+
+    private void Die()
+    {
+        GetComponent<BoxCollider2D>().isTrigger = false;
+        SpawnShit();
+        Destroy(gameObject);
     }
 
     // Update is called once per frame

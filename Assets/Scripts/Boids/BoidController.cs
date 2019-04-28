@@ -24,6 +24,8 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Cinemachine;
+using UnityEngine.SceneManagement;
 
 public class BoidController : MonoBehaviour
 {
@@ -54,24 +56,43 @@ public class BoidController : MonoBehaviour
     void Start()
     {
         boids = new List<GameObject>();
-        
-        for (var i = 0; i < spawnCount; i++) 
+
+        for (var i = 0; i < spawnCount; i++)
             boids.Add(Spawn());
     }
 
     private void Update()
     {
+        
         transform.localPosition = new Vector3(8,0,0);
         
         if (Input.GetKey(KeyCode.Z))
         {
             boids.Add(Spawn(transform.position));
         }
+
+        if (Input.GetKey(KeyCode.Q))
+        {
+            boids.ForEach(boid => boid.GetComponent<BoidBehaviour>().DisableVisualAndPlay());
+        }
+
+        if (Input.GetKey(KeyCode.R))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
     }
 
     public GameObject Spawn()
     {
         return Spawn(transform.position + Random.insideUnitSphere * spawnRadius);
+    }
+
+    public void Spawn(int number, Vector3 position)
+    {
+        for (int i = 0; i < number; i++)
+        {
+            boids.Add(Spawn(position));
+        }
     }
 
     public GameObject Spawn(Vector3 position)

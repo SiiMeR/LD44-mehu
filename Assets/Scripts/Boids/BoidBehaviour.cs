@@ -25,6 +25,7 @@ using UnityEngine;
 using System.Collections;
 using System.Linq;
 using Cinemachine;
+using DG.Tweening;
 
 public class BoidBehaviour : MonoBehaviour
 {
@@ -42,7 +43,8 @@ public class BoidBehaviour : MonoBehaviour
             return controller;
         }
         set => controller = value;
-    }
+    }  
+    
 
     // Options for animation playback.
     public float animationSpeedVariation = 0.2f;
@@ -60,6 +62,7 @@ public class BoidBehaviour : MonoBehaviour
 
     private BoxCollider2D _boxCollider2D;
 
+    private ParticleSystem _particleSystem;
     // Caluculates the separation vector with a target.
     Vector3 GetSeparationVector(Transform target)
     {
@@ -70,25 +73,34 @@ public class BoidBehaviour : MonoBehaviour
         return diff * (scaler / diffLen);
     }
 
-    private void OnCollisionEnter2D(Collision2D other)
-    {
-        if (other.gameObject.layer == 10)
-        {
-            Destroy(gameObject);
-        }
-    }
+
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.layer == 10)
         {
-            Destroy(gameObject);
+            DisableVisualAndPlay();
         }
     }
 
+    public void DisableVisualAndPlay()
+    {    
+        var seq = DOTween.Sequence();
+
+        seq.AppendCallback(() =>
+            {
+                GetComponent<BoxCollider2D>().isTrigger = false;
+                GetComponent<SpriteRenderer>().enabled = false;
+                _particleSystem.Play();
+            })
+            .AppendInterval(1.0f)
+            .AppendCallback(() => Destroy(this))
+            .Play();
+    }    
+
     private void OnDestroy()
     {
-        Controller.boids.Remove(gameObject);
+        Controller.boids?.Remove(gameObject);
 
         if (Controller.transform.parent == gameObject.transform)
         {
@@ -98,6 +110,7 @@ public class BoidBehaviour : MonoBehaviour
             Controller.transform.localPosition = new Vector3(8,0,0);
             Controller.enabled = true;
             FindObjectOfType<CinemachineVirtualCamera>().Follow = controllerBoid.transform;
+            print($"control given to {controllerBoid.name} at pos {controllerBoid.transform.position}");
             var boidBehaviour = controllerBoid.GetComponent<BoidBehaviour>();
             boidBehaviour.isMainBoid = true;
             boidBehaviour.gameObject.layer = 11;
@@ -110,7 +123,8 @@ public class BoidBehaviour : MonoBehaviour
         _rigidBody = GetComponent<Rigidbody2D>();
         _renderer = GetComponent<SpriteRenderer>();
         _boxCollider2D = GetComponent<BoxCollider2D>();
-
+        _particleSystem = GetComponentInChildren<ParticleSystem>();
+        
         noiseOffset = Random.value * 10.0f;
 
         var animator = GetComponent<Animator>();
@@ -235,11 +249,11 @@ public class BoidBehaviour : MonoBehaviour
             {
                 var quat = Quaternion.FromToRotation(transform.right, rch2.normal) * transform.rotation;
                 // var quat = Quaternion.FromToRotation(transform.right, rayCastHit.normal);
-                transform.rotation = Quaternion.Lerp(transform.rotation, quat, 0.2f);
+                transform.rotation = Quaternion.Lerp(transform.rotation, quat, 0.1f);
  
             }
 
-            targetRigidBodyPos *= 0.3f + (rch2.distance/6.0f);
+            targetRigidBodyPos *= 0.4f + (rch2.distance/6.0f);
             
         }
         else
