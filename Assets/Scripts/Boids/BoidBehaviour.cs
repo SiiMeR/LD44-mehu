@@ -129,6 +129,8 @@ public class BoidBehaviour : MonoBehaviour
         var animator = GetComponent<Animator>();
         if (animator)
             animator.speed = Random.Range(0.6f,1.0f) * animationSpeedVariation + 1.0f;
+
+        StartCoroutine(Craw());
     }
 
     public void DestroyThis()
@@ -137,6 +139,15 @@ public class BoidBehaviour : MonoBehaviour
     }
     
     
+    private IEnumerator Craw()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(Random.Range(0,5));
+            var randIdx = Random.Range(1, 9);
+            AudioManager.Instance.Play($"crowing-{randIdx}", position:transform.position);   
+        }   
+    }
     
     void FixedUpdate()
     {
