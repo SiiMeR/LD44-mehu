@@ -80,6 +80,11 @@ public class BoidController : MonoBehaviour
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
+
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            boids.ForEach(boid => boid.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeAll);
+        }
     }
 
     public GameObject Spawn()

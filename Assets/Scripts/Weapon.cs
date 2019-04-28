@@ -63,6 +63,7 @@ public class Weapon : MonoBehaviour
     {
         if (other.gameObject.layer == 8 || other.gameObject.layer == 11)
         {
+                
             var go = other.gameObject;
             go.layer = 0;
             
@@ -74,18 +75,25 @@ public class Weapon : MonoBehaviour
             {
                 boidBehaviour.Controller.boids?.Remove(go);
             }
-
+    
             if (boidBehaviour.isMainBoid)
             {
-                FindObjectOfType<CinemachineVirtualCamera>().Follow = boidBehaviour.Controller.boids[0].transform;
+                if (boidBehaviour.Controller.boids != null && boidBehaviour.Controller.boids.Count > 0)
+                {
+                    var newBoid = boidBehaviour.Controller.boids[0].GetComponent<BoidBehaviour>();
+                    FindObjectOfType<CinemachineVirtualCamera>().Follow = newBoid.transform;
                             
-                boidBehaviour.Controller.transform.parent = boidBehaviour.Controller.boids[0].transform;
-                boidBehaviour.Controller.transform.localPosition = new Vector3(8,0,0);
-                boidBehaviour.Controller.enabled = true;
+                    boidBehaviour.Controller.transform.parent = newBoid.transform;
+                    boidBehaviour.Controller.transform.localPosition = new Vector3(8,0,0);
+                    newBoid.Controller.enabled = true;
+                    newBoid.isMainBoid = true;
+                }
+                else
+                {
+                    print("boiid null");
+                }
             }
-
-
-
+            
             boidBehaviour.enabled = false;
 
             var joint = gameObject.AddComponent<FixedJoint2D>();

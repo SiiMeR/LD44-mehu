@@ -85,14 +85,22 @@ public class BoidBehaviour : MonoBehaviour
 
     public void DisableVisualAndPlay()
     {    
-        var seq = DOTween.Sequence();
-
-        if (Controller.boids.Count == 0) return;
-        var controllerBoid = Controller.boids[0];    
-        Controller.transform.parent = controllerBoid.transform;
-        Controller.transform.localPosition = new Vector3(8,0,0);
-        Controller.enabled = true;
+        if (isMainBoid)
+        {
+            print("ismain");
+            if (Controller.boids.Count == 0) return;
+            var controllerBoid = Controller.boids[0];    
+            Controller.transform.parent = controllerBoid.transform;
+            Controller.transform.localPosition = new Vector3(8,0,0);
+            Controller.enabled = true;
+            FindObjectOfType<CinemachineVirtualCamera>().Follow = controllerBoid.transform;
+            var boidBehaviour = controllerBoid.GetComponent<BoidBehaviour>();
+            boidBehaviour.isMainBoid = true;
+            boidBehaviour.gameObject.layer = 11;
+            controllerBoid.GetComponent<BoxCollider2D>().isTrigger = true;
+        }
         
+        var seq = DOTween.Sequence();
         seq.AppendCallback(() =>
             {
                 GetComponent<BoxCollider2D>().isTrigger = false;
@@ -106,21 +114,7 @@ public class BoidBehaviour : MonoBehaviour
 
     private void OnDestroy()
     {
-        Controller.boids?.Remove(gameObject);
-
-        if (Controller.transform.parent == gameObject.transform)
-        {
-            if (Controller.boids.Count == 0) return;
-            var controllerBoid = Controller.boids[0];    
-            Controller.transform.parent = controllerBoid.transform;
-            Controller.transform.localPosition = new Vector3(8,0,0);
-            Controller.enabled = true;
-            FindObjectOfType<CinemachineVirtualCamera>().Follow = controllerBoid.transform;
-            var boidBehaviour = controllerBoid.GetComponent<BoidBehaviour>();
-            boidBehaviour.isMainBoid = true;
-            boidBehaviour.gameObject.layer = 11;
-            controllerBoid.GetComponent<BoxCollider2D>().isTrigger = true;
-        }
+        Controller?.boids?.Remove(gameObject);
     }
 
     void Start()
@@ -254,11 +248,11 @@ public class BoidBehaviour : MonoBehaviour
             {
                 var quat = Quaternion.FromToRotation(transform.right, rch2.normal) * transform.rotation;
                 // var quat = Quaternion.FromToRotation(transform.right, rayCastHit.normal);
-                transform.rotation = Quaternion.Lerp(transform.rotation, quat, 0.1f);
+                transform.rotation = Quaternion.Lerp(transform.rotation, quat, 0.05f);
  
             }
 
-            targetRigidBodyPos *= 0.4f + (rch2.distance/6.0f);
+            targetRigidBodyPos *= 0.5f + (rch2.distance/6.0f);
             
         }
         else
