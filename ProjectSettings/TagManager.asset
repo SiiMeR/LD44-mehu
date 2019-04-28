@@ -44,3 +44,6 @@ TagManager:
   - name: Peasant
     uniqueID: 1768651593
     locked: 0
+  - name: King
+    uniqueID: 3059143131
+    locked: 0
