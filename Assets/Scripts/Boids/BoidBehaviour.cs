@@ -87,6 +87,12 @@ public class BoidBehaviour : MonoBehaviour
     {    
         var seq = DOTween.Sequence();
 
+        if (Controller.boids.Count == 0) return;
+        var controllerBoid = Controller.boids[0];    
+        Controller.transform.parent = controllerBoid.transform;
+        Controller.transform.localPosition = new Vector3(8,0,0);
+        Controller.enabled = true;
+        
         seq.AppendCallback(() =>
             {
                 GetComponent<BoxCollider2D>().isTrigger = false;
@@ -110,7 +116,6 @@ public class BoidBehaviour : MonoBehaviour
             Controller.transform.localPosition = new Vector3(8,0,0);
             Controller.enabled = true;
             FindObjectOfType<CinemachineVirtualCamera>().Follow = controllerBoid.transform;
-            print($"control given to {controllerBoid.name} at pos {controllerBoid.transform.position}");
             var boidBehaviour = controllerBoid.GetComponent<BoidBehaviour>();
             boidBehaviour.isMainBoid = true;
             boidBehaviour.gameObject.layer = 11;

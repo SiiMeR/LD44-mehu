@@ -77,13 +77,11 @@ public class Weapon : MonoBehaviour
 
             if (boidBehaviour.isMainBoid)
             {
-                if (boidBehaviour)
-                {
-                    if (boidBehaviour.Controller)
-                    {
-                        FindObjectOfType<CinemachineVirtualCamera>().Follow = boidBehaviour.Controller.boids[0].transform;
-                    }
-                }
+                FindObjectOfType<CinemachineVirtualCamera>().Follow = boidBehaviour.Controller.boids[0].transform;
+                            
+                boidBehaviour.Controller.transform.parent = boidBehaviour.Controller.boids[0].transform;
+                boidBehaviour.Controller.transform.localPosition = new Vector3(8,0,0);
+                boidBehaviour.Controller.enabled = true;
             }
 
 
