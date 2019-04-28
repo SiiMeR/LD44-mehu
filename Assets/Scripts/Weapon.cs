@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Cinemachine;
 using DG.Tweening;
 using UnityEngine;
 
@@ -44,8 +45,10 @@ public class Weapon : MonoBehaviour
 
         var targetPos = crow.transform.position - transform.position;
 
+        print(targetPos);
+        var targ = Vector2.MoveTowards(transform.position, targetPos, GetComponent<SpriteRenderer>().bounds.size.y);
         transform
-            .DOPunchPosition(targetPos * 0.75f, 1.5f, 0, 0.1f)
+            .DOPunchPosition(targetPos, 1.5f, 0, 0.1f)
             .OnComplete(() =>
             {
                 _collider.enabled = false;
@@ -67,13 +70,26 @@ public class Weapon : MonoBehaviour
 
             var boidBehaviour = go.gameObject.GetComponent<BoidBehaviour>();
 
-            if (boidBehaviour.Controller)
+            if (boidBehaviour && boidBehaviour.Controller)
             {
                 boidBehaviour.Controller.boids?.Remove(go);
             }
 
+            if (boidBehaviour.isMainBoid)
+            {
+                if (boidBehaviour)
+                {
+                    if (boidBehaviour.Controller)
+                    {
+                        FindObjectOfType<CinemachineVirtualCamera>().Follow = boidBehaviour.Controller.boids[0].transform;
+                    }
+                }
+            }
+
+
+
             boidBehaviour.enabled = false;
-        
+
             var joint = gameObject.AddComponent<FixedJoint2D>();
 
             var closestPoint = GetComponent<Collider2D>().bounds.ClosestPoint(go.transform.position);
