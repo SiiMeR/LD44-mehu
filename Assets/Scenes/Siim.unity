@@ -33889,7 +33889,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: -0.014846802, y: -0.108882904}
@@ -34160,13 +34160,11 @@ MonoBehaviour:
   _moveSpeed: 10
   _maxHealth: 20
   _moveRange: 20
-  _weapon: {fileID: 922857347}
   _detectionRadius: 15
-  _windupTime: 1.5
-  _coolDown: 2
   _crows:
     serializedVersion: 2
     m_Bits: 2304
+  _weapon: {fileID: 922857350}
 --- !u!212 &815383340
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -34238,7 +34236,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 815383338}
-  m_BodyType: 0
+  m_BodyType: 2
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -34261,7 +34259,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -34287,6 +34285,8 @@ GameObject:
   m_Component:
   - component: {fileID: 922857349}
   - component: {fileID: 922857348}
+  - component: {fileID: 922857351}
+  - component: {fileID: 922857350}
   m_Layer: 0
   m_Name: hark
   m_TagString: Untagged
@@ -34356,6 +34356,49 @@ Transform:
   m_Father: {fileID: 815383341}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &922857350
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 922857347}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 432707ea4c51f534c921843091ddaf8c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _windupTime: 1.5
+  _coolDown: 2
+  _coolDownTimer: 0
+  _windupTimer: 0
+  _punching: 0
+--- !u!61 &922857351
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 922857347}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: -0.034240723, y: 2.5865893}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1.0666667, y: 6.5333333}
+    newSize: {x: 0.32, y: 1.96}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 0.6748657, y: 1.2883043}
+  m_EdgeRadius: 0
 --- !u!1 &938895303
 GameObject:
   m_ObjectHideFlags: 3

@@ -33,7 +33,7 @@ public class MapSettings : ScriptableObject
     public float modifier;
     public bool topLayerOnly;
 }
-
+#if UNITY_EDITOR
 //Custom UI for our class
 [CustomEditor(typeof(MapSettings))]
 public class MapSettings_Editor : Editor
@@ -105,3 +105,5 @@ public class MapSettings_Editor : Editor
 			EditorUtility.SetDirty(mapLayer);
     }
 }
+
+#endif

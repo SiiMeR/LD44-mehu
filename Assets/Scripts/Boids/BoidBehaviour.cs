@@ -198,7 +198,6 @@ public class BoidBehaviour : MonoBehaviour
             if (boid.gameObject == gameObject) continue;
             if (Controller.transform.parent.name == boid.gameObject.name && isMainBoid)
             {
-                print("Mothefucker");
                 continue;
             }
             var t = boid.transform;
