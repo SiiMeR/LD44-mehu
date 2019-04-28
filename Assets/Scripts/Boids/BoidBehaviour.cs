@@ -120,7 +120,7 @@ public class BoidBehaviour : MonoBehaviour
             {
                 if (FindObjectsOfType<BoidBehaviour>().Length == 1)
                 {
-                    Controller.DeathScreen.DOFade(1.0f, 1.0f)
+                    Controller.DeathScreen.DOFade(1.5f, 1.0f)
                         .OnComplete(() => SceneManager.LoadScene("End"));
                     Destroy(gameObject);
                 }
@@ -165,7 +165,7 @@ public class BoidBehaviour : MonoBehaviour
         {
             yield return new WaitForSeconds(Random.Range(0,5));
             var randIdx = Random.Range(1, 9);
-            AudioManager.Instance.Play($"crowing-{randIdx}", position:transform.position);   
+            AudioManager.Instance.Play($"crowing-{randIdx}", 0.15f,position:transform.position);   
         }   
     }
     

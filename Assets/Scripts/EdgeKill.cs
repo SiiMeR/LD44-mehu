@@ -68,7 +68,7 @@ public class EdgeKill : MonoBehaviour
     private void OnTriggerExit2D(Collider2D other)
     {
         var boid = other.gameObject.GetComponent<BoidBehaviour>();
-        if (boid.MarkedForKill)
+        if (!boid || boid.MarkedForKill)
             return;
             
         print($"exit? + {other.name}, {other.transform.position}");
