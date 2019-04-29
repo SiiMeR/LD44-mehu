@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Kunn : MonoBehaviour
 {
@@ -24,22 +26,30 @@ public class Kunn : MonoBehaviour
 
     public LayerMask _crows;
 
+    public Image HitpointsImage;
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.layer == 8 || other.gameObject.layer == 11)
         {
+
+            if (!anim.GetCurrentAnimatorStateInfo(0).IsName("Vulnerable"))
+                return;
+            
             if (_currentHealth-- <= 0)
             {
                 Die();
                 return;
             }
+
+            HitpointsImage.DOFillAmount(_currentHealth / (MaxHealth * 1.0f), 0.05f);
         }
     }
 
     private void Die()
     {
         GetComponent<BoxCollider2D>().isTrigger = false;
+        Destroy(HitpointsImage.rectTransform.parent.gameObject);
         Destroy(gameObject);
     }
 
@@ -51,9 +61,13 @@ public class Kunn : MonoBehaviour
         _collider2D = GetComponent<BoxCollider2D>();
     }
 
+
     // Update is called once per frame
     void Update()
     {
+        HitpointsImage.rectTransform.parent.localPosition = new Vector3(0, 10, 0);
+
+        
         _windupTimer -= Time.deltaTime;
         _cooldownTimer -= Time.deltaTime;
 
@@ -113,7 +127,7 @@ public class Kunn : MonoBehaviour
         
         foreach (var spriteRenderer in srenderers)
         {
-            spriteRenderer.DOColor(Color.black, 0.4f).SetEase(Ease.Linear).SetLoops(14, LoopType.Yoyo);
+            spriteRenderer.DOColor(Color.black, 0.4f).SetEase(Ease.Linear).SetLoops(12, LoopType.Yoyo);
         }
         
         yield return new WaitForSeconds(5.0f);
