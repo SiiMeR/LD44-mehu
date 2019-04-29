@@ -56,6 +56,29 @@ public class BoidController : MonoBehaviour
     public Image DeathScreen;
     public int BoidsCount => boids.Count;
 
+    [SerializeField]
+    private GameObject _mainBoid;
+
+    public GameObject MainBoid
+    {
+        get
+        {
+            if (_mainBoid == null)
+            {
+                var boid = FindObjectOfType<BoidBehaviour>();
+
+                if (!FindObjectOfType<Kunn>().isdying)
+                {
+                    FindObjectOfType<CinemachineVirtualCamera>().Follow = boid.transform;
+                }
+                boid.isMainBoid = true;
+                _mainBoid = boid.transform.gameObject;
+            }
+            return _mainBoid;
+        }
+        set => _mainBoid = value;
+    }
+
     void Start()
     {
         boids = new List<GameObject>();    
@@ -70,33 +93,49 @@ public class BoidController : MonoBehaviour
 
     private void Update()
     {
-        
-        transform.localPosition = new Vector3(8,0,0);
-        
-        if (Input.GetKey(KeyCode.Z))
+        if (Input.GetKeyDown(KeyCode.Plus)|| Input.GetKeyDown(KeyCode.KeypadPlus))
         {
-            boids.Add(Spawn(transform.position));
+            AudioManager.Instance.musicVolume += 0.1f;
+            AudioManager.Instance.soundVolume += 0.1f;
+        } 
+        
+        if (Input.GetKeyDown(KeyCode.Minus)  || Input.GetKeyDown(KeyCode.KeypadMinus) )
+        {
+            AudioManager.Instance.musicVolume -= 0.1f;
+            AudioManager.Instance.soundVolume -= 0.1f;
+        }
+        
+        
+        if (Input.GetKey(KeyCode.F1))
+        {
+            boids.Add(Spawn(MainBoid.transform.position));
         }
 
-        if (Input.GetKey(KeyCode.Q))
+        if (Input.GetKey(KeyCode.F2))
         {
             boids.ForEach(boid => boid.GetComponent<BoidBehaviour>().DisableVisualAndPlay());
         }
 
-        if (Input.GetKey(KeyCode.R))
+        if (Input.GetKey(KeyCode.F3))
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
 
-        if (Input.GetKeyDown(KeyCode.F))
+        if (Input.GetKeyDown(KeyCode.F4))
         {
             boids.ForEach(boid => boid.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeAll);
+        }
+
+        if (Input.GetKeyDown(KeyCode.F5))
+        {
+            Destroy(MainBoid);
         }
     }
 
     public GameObject Spawn()
     {
-        return Spawn(transform.position + Random.insideUnitSphere * spawnRadius);
+        var insideUnitCircle = Random.insideUnitCircle;
+        return Spawn(MainBoid.transform.position + new Vector3(insideUnitCircle.x, insideUnitCircle.y, 0) * spawnRadius);
     }
 
     public void Spawn(int number, Vector3 position)
@@ -109,13 +148,14 @@ public class BoidController : MonoBehaviour
 
     public GameObject Spawn(Vector3 position)
     {
-        var rotation = Quaternion.Slerp(transform.rotation, Random.rotation, 0.3f);
+        var rotation = Quaternion.Slerp(MainBoid.transform.rotation, Random.rotation, 0.3f);
         var boid = Instantiate(boidPrefab, position, rotation);
         
         var r = Random.Range(0.7f, 1.3f);
-        boid.GetComponent<BoidBehaviour>().controller = this;
+        var boidCOmponent = boid.GetComponent<BoidBehaviour>();
+        boidCOmponent.controller = this;
+        boidCOmponent.transform.localScale *= r;
         
-        boid.transform.localScale *= r;
         return boid;
     }
 }

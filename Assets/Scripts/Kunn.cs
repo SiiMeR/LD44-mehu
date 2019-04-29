@@ -1,14 +1,16 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
+using System.Linq;
+using Cinemachine;
 using DG.Tweening;
-using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Kunn : MonoBehaviour
 {
     private Animator anim;
 
+    public CinemachineVirtualCamera cams;
 
     public SwordCollisoin weapon;
     public float DetectionRange = 10.0f;
@@ -26,7 +28,9 @@ public class Kunn : MonoBehaviour
 
     public LayerMask _crows;
 
+    private  ParticleSystem particlesystem;
     public Image HitpointsImage;
+    public bool isdying;
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -48,14 +52,39 @@ public class Kunn : MonoBehaviour
 
     private void Die()
     {
+        if (isdying)
+            return;
+        
+        isdying = true;
+
         GetComponent<BoxCollider2D>().isTrigger = false;
-        Destroy(HitpointsImage.rectTransform.parent.gameObject);
-        Destroy(gameObject);
+
+        DOTween.KillAll();
+        var seq = DOTween.Sequence();
+        seq
+            .AppendCallback((() =>
+            {
+                cams.Priority = 100;
+                Destroy(HitpointsImage.rectTransform.parent.gameObject);
+                anim.SetTrigger("Dead");
+            }))
+            .AppendInterval(2.5f)
+            .AppendCallback(() =>
+            {
+                particlesystem.Play();
+                GetComponentsInChildren<SpriteRenderer>().ToList().ForEach(sr => sr.DOColor(Color.black, 0.25f));
+            })
+            .AppendInterval(3f)
+            .Append(FindObjectOfType<BoidController>().DeathScreen.DOFade(1.0f, 4.0f))
+            .AppendCallback((() => SceneManager.LoadScene("WinEnd")))
+            .Play();
+//        Destroy(gameObject);
     }
 
     // Start is called before the first frame update
     void Start()
     {
+        particlesystem = GetComponentInChildren<ParticleSystem>();
         _currentHealth = MaxHealth;
         anim = GetComponent<Animator>();
         _collider2D = GetComponent<BoxCollider2D>();
@@ -65,7 +94,10 @@ public class Kunn : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        HitpointsImage.rectTransform.parent.localPosition = new Vector3(0, 10, 0);
+        if (HitpointsImage)
+        {
+            HitpointsImage.rectTransform.parent.localPosition = new Vector3(0, 10, 0);            
+        }
 
         
         _windupTimer -= Time.deltaTime;
@@ -90,11 +122,15 @@ public class Kunn : MonoBehaviour
         _windupTimer = WindupTime;
         _swinging = true;
 
+
 //        _animationController.
         while ((_windupTimer -= Time.deltaTime) > 0)
         {
             yield return null;
         }
+        
+        AudioManager.Instance.Play("angry-king1");
+        
         weapon.GetComponent<BoxCollider2D>().enabled = true;
 
         var shouldFlip = crow.transform.position.x < transform.position.x;
@@ -113,6 +149,7 @@ public class Kunn : MonoBehaviour
     public void OnSecondAttackStarting()
     {
         transform.rotation = Quaternion.Euler(0, transform.rotation.eulerAngles.y + 180, 0);
+//        transform.localScale = new Vector3(1,transform.localScale.y + ,1);
     }
     public IEnumerator SecondAttackCOmplete()
     {

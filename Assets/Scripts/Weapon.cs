@@ -91,10 +91,6 @@ public class Weapon : MonoBehaviour
                 if (boidBehaviour.Controller.boids != null && boidBehaviour.Controller.boids.Count > 0)
                 {
                     var newBoid = boidBehaviour.Controller.boids[0].GetComponent<BoidBehaviour>();
-                    FindObjectOfType<CinemachineVirtualCamera>().Follow = newBoid.transform;
-                            
-                    boidBehaviour.Controller.transform.parent = newBoid.transform;
-                    boidBehaviour.Controller.transform.localPosition = new Vector3(8,0,0);
                     newBoid.Controller.enabled = true;
                     newBoid.isMainBoid = true;
                 }

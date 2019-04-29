@@ -95,18 +95,15 @@ public class BoidBehaviour : MonoBehaviour
         }
         
         MarkedForKill = true;
-        if (isMainBoid && Controller.BoidsCount != 0)
-        {
-            var controllerBoid = Controller.boids[0];    
-            Controller.transform.parent = controllerBoid.transform;
-            Controller.transform.localPosition = new Vector3(8,0,0);
-            Controller.enabled = true;
-            FindObjectOfType<CinemachineVirtualCamera>().Follow = controllerBoid.transform;
-            var boidBehaviour = controllerBoid.GetComponent<BoidBehaviour>();
-            boidBehaviour.isMainBoid = true;
-            boidBehaviour.gameObject.layer = 11;
-            controllerBoid.GetComponent<BoxCollider2D>().isTrigger = true;
-        }
+//        if (isMainBoid && Controller.BoidsCount != 0)
+//        {
+//            var controllerBoid = Controller.boids[0];    
+////            FindObjectOfType<CinemachineVirtualCamera>().Follow = controllerBoid.transform;
+//            var boidBehaviour = controllerBoid.GetComponent<BoidBehaviour>();
+//            boidBehaviour.isMainBoid = true;
+//            boidBehaviour.gameObject.layer = 11;
+//            controllerBoid.GetComponent<BoxCollider2D>().isTrigger = true;
+//        }
         
         var seq = DOTween.Sequence();
         seq.AppendCallback(() =>
@@ -122,11 +119,11 @@ public class BoidBehaviour : MonoBehaviour
                 {
                     Controller.DeathScreen.DOFade(1.5f, 1.0f)
                         .OnComplete(() => SceneManager.LoadScene("End"));
-                    Destroy(gameObject);
+                    Destroy(Controller.MainBoid);
                 }
                 else
                 {
-                    Destroy(gameObject);
+                    Destroy(Controller.MainBoid);
                 }
             })
             .Play();
@@ -134,7 +131,7 @@ public class BoidBehaviour : MonoBehaviour
 
     private void OnDestroy()
     {
-        Controller?.boids?.Remove(gameObject);
+        Controller?.boids?.Remove(Controller.MainBoid);
     }
 
     void Start()
@@ -152,12 +149,6 @@ public class BoidBehaviour : MonoBehaviour
 
         StartCoroutine(Craw());
     }
-
-    public void DestroyThis()
-    {
-        Destroy(this);
-    }
-    
     
     private IEnumerator Craw()
     {
@@ -230,8 +221,8 @@ public class BoidBehaviour : MonoBehaviour
 
         // Initializes the vectors.
         var separation = Vector3.zero;
-        var alignment = Controller.transform.right;
-        var cohesion = Controller.transform.position;
+        var alignment = Controller.MainBoid.transform.right;
+        var cohesion = Controller.MainBoid.transform.position;
 
         // Looks up nearby boids.
         var nearbyBoids = Physics2D.OverlapCircleAll(currentPosition, Controller.neighborDist, Controller.searchLayer);
@@ -240,7 +231,7 @@ public class BoidBehaviour : MonoBehaviour
         foreach (var boid in nearbyBoids)
         {
             if (boid.gameObject == gameObject) continue;
-            if (Controller.transform.parent.name == boid.gameObject.name && isMainBoid)
+            if (isMainBoid)
             {
                 continue;
             }
