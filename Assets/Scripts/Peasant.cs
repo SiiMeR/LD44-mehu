@@ -8,14 +8,14 @@ using Random = UnityEngine.Random;
 public class Peasant : MonoBehaviour
 {
     [SerializeField] private float _moveSpeed = 10;
-    [SerializeField] private int _maxHealth = 20;
     [SerializeField] private int _moveRange = 20;
     [SerializeField] private float _detectionRadius = 10.0f;
     [SerializeField] private LayerMask _crows;
     [SerializeField] private Weapon _weapon;
     [SerializeField] private int _crowsOnDeath = 3;
 
-    
+
+    [SerializeField] private int _maxHealth = 20;
     private int _currentHealth;
     private SpriteRenderer _renderer;
 
@@ -50,23 +50,19 @@ public class Peasant : MonoBehaviour
     {
         if (other.gameObject.layer == 8 || other.gameObject.layer == 11)
         {
-
-            print("hp " + _currentHealth);
             if (_currentHealth-- <= 0)
             {
                 Die();
                 return;
-}
-
-
+            }
         }
     }
 
     private void Die()
     {
         GetComponent<BoxCollider2D>().isTrigger = false;
-        SpawnShit();
         Destroy(gameObject);
+        SpawnShit();
     }
 
     // Update is called once per frame
