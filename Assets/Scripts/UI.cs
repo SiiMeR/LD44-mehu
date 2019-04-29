@@ -31,6 +31,7 @@ public class UI : MonoBehaviour
     void Update()
     {
         var len = FindObjectsOfType<BoidBehaviour>().Length;
+
         _textMeshProUgui.text = "<sprite=0> = " + len ;
     }
 }
