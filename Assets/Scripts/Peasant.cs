@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class Peasant : MonoBehaviour
@@ -13,6 +15,7 @@ public class Peasant : MonoBehaviour
     [SerializeField] private LayerMask _crows;
     [SerializeField] private Weapon _weapon;
     [SerializeField] private int _crowsOnDeath = 3;
+    public Image HitpointsImage;
 
 
     [SerializeField] private int _maxHealth = 20;
@@ -21,9 +24,14 @@ public class Peasant : MonoBehaviour
 
     private bool _isMovingRight;
 
+    private ParticleSystem systemP;
+
+    private bool     isdying;
+
     // Start is called before the first frame update
     void Start()
     {
+        systemP = GetComponentInChildren<ParticleSystem>();
         _currentHealth = _maxHealth;
         _renderer = GetComponent<SpriteRenderer>();
 
@@ -55,19 +63,49 @@ public class Peasant : MonoBehaviour
                 Die();
                 return;
             }
+
+            HitpointsImage.DOFillAmount(_currentHealth / (_maxHealth * 1.0f), 0.05f);
         }
     }
 
     private void Die()
     {
+        if (isdying)
+            return;
+        isdying = true;
         GetComponent<BoxCollider2D>().isTrigger = false;
-        Destroy(gameObject);
-        SpawnShit();
+
+        var seq = DOTween.Sequence();
+        seq
+            .AppendCallback(() =>
+            {
+                Destroy(HitpointsImage.rectTransform.parent.gameObject);
+                systemP.Play();
+                SpawnShit();
+
+            })
+            .AppendInterval(0.25f)
+            .AppendCallback(() =>
+            {
+                GetComponentsInChildren<SkinnedMeshRenderer>().ToList().ForEach(sr => sr.enabled = false);
+
+            })
+            .AppendInterval(1.0f)
+            .AppendCallback(() =>
+            {
+
+                Destroy(gameObject);
+            })
+            .Play();
+        
+        
     }
 
     // Update is called once per frame
     void Update()
     {
+        if(isdying)
+            return;
         if (_weapon._coolDownTimer <= 0 && !_weapon._punching && _weapon._windupTimer <= 0)
         {
             var pos = transform.position;

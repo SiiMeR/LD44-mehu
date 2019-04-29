@@ -52,7 +52,7 @@ public class Weapon : MonoBehaviour
         
         _collider.enabled = true;
 
-        var targetPos = crow.transform.position - weaponTrans.position;
+        var targetPos = crow.transform.position - weaponTrans.position;    
 
 //        var targ = Vector2.MoveTowards(transform.position, targetPos, GetComponent<SpriteRenderer>().bounds.size.y);
         weaponTrans    
@@ -77,52 +77,56 @@ public class Weapon : MonoBehaviour
             var go = other.gameObject;
             go.layer = 0;
             
-            Destroy(go.GetComponent<BoxCollider2D>());
+//            Destroy(go.GetComponent<BoxCollider2D>());
 
+            
             var boidBehaviour = go.gameObject.GetComponent<BoidBehaviour>();
-
-            if (boidBehaviour && boidBehaviour.Controller)
-            {
-                boidBehaviour.Controller.boids?.Remove(go);
-            }
-    
-            if (boidBehaviour.isMainBoid)
-            {
-                if (boidBehaviour.Controller.boids != null && boidBehaviour.Controller.boids.Count > 0)
-                {
-                    var newBoid = boidBehaviour.Controller.boids[0].GetComponent<BoidBehaviour>();
-                    newBoid.Controller.enabled = true;
-                    newBoid.isMainBoid = true;
-                }
-                else
-                {
-                    print("boiid null");
-                }
-            }
             
-            boidBehaviour.enabled = false;
-
-            var joint = gameObject.AddComponent<FixedJoint2D>();
-
-            var closestPoint = GetComponent<Collider2D>().bounds.ClosestPoint(go.transform.position);
-
-            joint.anchor = closestPoint;
-
-            joint.connectedBody = other.gameObject.GetComponent<Rigidbody2D>();
-
-            joint.enableCollision = false;
-
-            go.transform.parent = joint.transform;
+            boidBehaviour.DisableVisualAndPlay();
             
-            Destroy(go.GetComponent<Animator>());
 
-            var seq = DOTween.Sequence();
-            seq.AppendInterval(2.0f)
-                .AppendCallback(() => go.GetComponentInChildren<ParticleSystem>().Play())
-                .AppendCallback(() => go.GetComponent<SpriteRenderer>().enabled = false)
-                .AppendInterval(1.0f)
-                .AppendCallback(() => Destroy(go))    
-                .Play();
+//            if (boidBehaviour && boidBehaviour.Controller)
+//            {
+//                boidBehaviour.Controller.boids?.Remove(go);
+//            }
+//    
+//            if (boidBehaviour.isMainBoid)
+//            {
+//                if (boidBehaviour.Controller.boids != null && boidBehaviour.Controller.boids.Count > 0)
+//                {
+//                    var newBoid = boidBehaviour.Controller.boids[0].GetComponent<BoidBehaviour>();
+//                    newBoid.Controller.enabled = true;
+//                    newBoid.isMainBoid = true;
+//                }
+//                else
+//                {
+//                    print("boiid null");
+//                }
+//            }
+//            
+//            boidBehaviour.enabled = false;
+
+//            var joint = gameObject.AddComponent<FixedJoint2D>();
+//
+//            var closestPoint = GetComponent<Collider2D>().bounds.ClosestPoint(go.transform.position);
+//
+//            joint.anchor = closestPoint;
+//
+//            joint.connectedBody = other.gameObject.GetComponent<Rigidbody2D>();
+//
+//            joint.enableCollision = false;
+
+//            go.transform.parent = joint.transform;
+            
+//            Destroy(go.GetComponent<Animator>());
+//
+//            var seq = DOTween.Sequence();
+//            seq.AppendInterval(2.0f)
+//                .AppendCallback(() => go.GetComponentInChildren<ParticleSystem>().Play())
+//                .AppendCallback(() => go.GetComponent<SpriteRenderer>().enabled = false)
+//                .AppendInterval(1.0f)
+//                .AppendCallback(() => Destroy(go))    
+//                .Play();
 //            go.GetComponent<SpriteRenderer>()
 //                .DOFade(0f, 2.5f)
 //                .SetEase(Ease.Linear);

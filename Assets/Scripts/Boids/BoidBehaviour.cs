@@ -123,7 +123,7 @@ public class BoidBehaviour : MonoBehaviour
                 }
                 else
                 {
-                    Destroy(Controller.MainBoid);
+                    Destroy(gameObject);
                 }
             })
             .Play();
@@ -131,7 +131,7 @@ public class BoidBehaviour : MonoBehaviour
 
     private void OnDestroy()
     {
-        Controller?.boids?.Remove(Controller.MainBoid);
+        Controller?.boids?.Remove(gameObject);
     }
 
     void Start()
@@ -162,6 +162,8 @@ public class BoidBehaviour : MonoBehaviour
     
     void FixedUpdate()
     {
+        if (MarkedForKill)
+            return;
         
         var rot = transform.rotation.eulerAngles.z;
         _renderer.flipY = rot <= 270f && rot > 90f;

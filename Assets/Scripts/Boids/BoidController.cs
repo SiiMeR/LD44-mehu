@@ -56,6 +56,7 @@ public class BoidController : MonoBehaviour
     public Image DeathScreen;
     public int BoidsCount => boids.Count;
 
+    public CinemachineVirtualCamera camm;
     [SerializeField]
     private GameObject _mainBoid;
 
@@ -67,9 +68,9 @@ public class BoidController : MonoBehaviour
             {
                 var boid = FindObjectOfType<BoidBehaviour>();
 
-                if (!FindObjectOfType<Kunn>().isdying)
+                if ((!FindObjectOfType<Kunn>()?.isdying) ?? false)
                 {
-                    FindObjectOfType<CinemachineVirtualCamera>().Follow = boid.transform;
+                    camm.Follow = boid.transform;
                 }
                 boid.isMainBoid = true;
                 _mainBoid = boid.transform.gameObject;
