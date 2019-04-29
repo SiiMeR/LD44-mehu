@@ -32,5 +32,5 @@ public class Spawna : MonoBehaviour
                currentPr = Instantiate(prefab, point.position, Quaternion.identity);
             }
         }
-    }
+    }    
 }
